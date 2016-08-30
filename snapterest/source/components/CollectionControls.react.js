@@ -3,21 +3,15 @@ var Header = require('./Header.react');
 var Button = require('./Button.react');
 var CollectionRenameForm = require('./CollectionRenameForm.react');
 var CollectionExportForm = require('./CollectionExportForm.react');
+var CollectionActionCreators = require('../actions/CollectionActionCreators');
+var CollectionStore = require('../stores/CollectionStore');
 
 var CollectionControls = React.createClass({
 
     getInitialState() {
         return {
-            name: 'new',
             isEditingName: false
         };
-    },
-
-    setCollectionName(name) {
-        this.setState({
-            name: name,
-            isEditingName: false
-        });
     },
 
     toggleEditCollectionName: function () {
@@ -30,6 +24,8 @@ var CollectionControls = React.createClass({
         var numberOfTweetsInCollection = this.props.numberOfTweetsInCollection;
         var text = numberOfTweetsInCollection;
 
+        var name = CollectionStore.getCollectionName();
+        
         if (numberOfTweetsInCollection === 1) {
             text = text + ' tweet in your';
         } else {
@@ -38,19 +34,22 @@ var CollectionControls = React.createClass({
 
         return (
             <span>
-                {text} <strong>{this.state.name}</strong> collection
+                {text} <strong>{name}</strong> collection
             </span>
         );
-},
+    },
+
+    removeAllTweetsFromCollection: function () {
+        CollectionActionCreators.removeAllTweetsFromCollection();
+    },
+
 
 
     render() {
 
         if(this.state.isEditingName) {
             return (
-                <CollectionRenameForm name={this.state.name}
-                                      onChangeCollectionName={this.setCollectionName}
-                                      onCancelCollectionNameChange={this.toggleEditCollectionName} />
+                <CollectionRenameForm onCancelCollectionNameChange={this.toggleEditCollectionName} />
             );
         }
 
@@ -58,7 +57,7 @@ var CollectionControls = React.createClass({
             <div>
                 <Header text={this.getHeaderText} />
                 <Button label="Rename Collection" handleClick={this.toggleEditCollectionName} />
-                <Button label="Empty Collection" handleClick={this.props.onRemoveAllTweetsFromCollection} />
+                <Button label="Empty Collection" handleClick={this.removeAllTweetsFromCollection} />
                 <CollectionExportForm htmlMarkup={this.props.htmlMarkup} />
             </div>
         );

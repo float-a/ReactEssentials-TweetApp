@@ -2,6 +2,7 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var Header = require('./Header.react');
 var Tweet = require('./Tweet.react');
+var CollectionActionCreators = require('../actions/CollectionActionCreators');
 
 
 var StreamTweet = React.createClass({
@@ -83,6 +84,10 @@ var StreamTweet = React.createClass({
         delete window.snapterest;
     },
 
+    addTweetToCollection(tweet) {
+        CollectionActionCreators.addTweetToCollection(tweet);
+    },
+
     render() {
         console.log('[Snapterest] StreamTweet: running render()');
 
@@ -92,7 +97,7 @@ var StreamTweet = React.createClass({
                 <Header text={this.state.headerText} />
                 
                 <Tweet tweet={this.props.tweet}
-                        onImageClick={this.props.onAddTweetToCollection}
+                        onImageClick={this.addTweetToCollection}
                 />
             
             </section>

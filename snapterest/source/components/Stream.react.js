@@ -1,27 +1,27 @@
 var React = require('react');
-var SnapkiteStreamClient = require('./mockTweets');
 var StreamTweet = require('./StreamTweet.react');
 var Header = require('./Header.react');
+var TweetStore = require('../stores/TweetStore');
 
 var Stream = React.createClass({
     
     getInitialState() {
         return {
-            tweet: null
+            tweet: TweetStore.getTweet()
         }
     },
 
-    componentDidMount(){
-        SnapkiteStreamClient.initializeStream(this.handleTweet);
+    componentDidMount() {
+        TweetStore.addChangeListener(this.onTweetChange);
     },
 
-    componentWillUnmount(){
-        SnapkiteStreamClient.destroyStream();
+    componentWillUnmount: function () {
+        TweetStore.removeChangeListener(this.onTweetChange);
     },
 
-    handleTweet(tweet){
+    onTweetChange: function () {
         this.setState({
-            tweet: tweet
+            tweet: TweetStore.getTweet()
         });
     },
 
@@ -32,11 +32,7 @@ var Stream = React.createClass({
         console.log(tweet);
 
         if(tweet){
-            return (
-                <StreamTweet tweet={tweet} 
-                             onAddTweetToCollection = {this.props.onAddTweetToCollection}
-                />
-            );
+            return (<StreamTweet tweet={tweet} />);
         } 
         return (
             <Header text = "Waiting for public photos from Twitter..." />
